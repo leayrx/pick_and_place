@@ -34,11 +34,13 @@ code jazzy-ros-ynov/
 When VSCode opens, trust the sources, and accept the installation of the Dev Container extension.
 To build the workspace use:
 
+
 cd ~/ros2_ws
 
 colcon build --symlink-install
 
 source ~/.bashrc
+
 
 Tiago 2D navigation using Nav2:
 

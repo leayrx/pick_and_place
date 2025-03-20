@@ -7,10 +7,10 @@ Project name: pick and place
 Le projet est développé dans un environnement ROS2 et utilise  Nav2 et OpenCV. Le robot commence par se déplacer vers des canettes afin de les récupérer. Une fois à proximité, il détecte la couleur de la canette détectée au centre de sa vision afin de l’identifier. Par la suite, Tiago navigue vers des boîtes de rangement spécifique en fonction de la couleur de la canette perçue. On vient alors scanner un marqueur Aruco sité au dessus de chaques boîte  pour vérifier que le robot se trouve devant la bonne boîte de rangement. Si le code Aruco est correct, le robot acquiesce en faisant un signe "oui" de la tête. Sinon, il tourne la tête de gauche à droite pour indiquer "non".
 
 technologie utilisé : 
-ROS2 jazzy : framework de robotique
-Gazebo : Simulation du robot
-Nav2 : Navigation autonome
-OpenCV : détection et traitement d'image pour l'aruco et couleur 
+- ROS2 jazzy : framework de robotique
+- Gazebo : Simulation du robot
+- Nav2 : Navigation autonome
+- OpenCV : détection et traitement d'image pour l'aruco et couleur 
 
 
 

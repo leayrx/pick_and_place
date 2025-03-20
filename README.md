@@ -1,18 +1,24 @@
 Project name: pick and place 
  
-👨‍💻 Students: Yrieix L et Leger V
+👨‍💻 Eleves: Yrieix L et Leger V
 
-📄 This project in short
-Le projet est développé dans l’environnement ROS2 et utilise  Nav2 et OpenCV. Le robot commence par se déplacer vers la canette à récupérer. Une fois à proximité, il détecte sa couleur afin de l’identifier. Ensuite, il navigue vers la boîte de rangement correspondante et scanne un marqueur ArUco pour vérifier qu’il est au bon emplacement. Si le code ArUco est correct, le robot acquiesce en faisant un signe de tête "oui", sinon, il secoue la tête pour indiquer "non".
+📄 Le projet en quelques lignes :
+
+Le projet est développé dans un environnement ROS2 et utilise  Nav2 et OpenCV. Le robot commence par se déplacer vers des canettes afin de les récupérer. Une fois à proximité, il détecte la couleur de la canette détectée au centre de sa vision afin de l’identifier. Par la suite, Tiago navigue vers des boîtes de rangement spécifique en fonction de la couleur de la canette perçue. On vient alors scanner un marqueur Aruco sité au dessus de chaques boîte  pour vérifier que le robot se trouve devant la bonne boîte de rangement. Si le code Aruco est correct, le robot acquiesce en faisant un signe "oui" de la tête. Sinon, il tourne la tête de gauche à droite pour indiquer "non".
 
 
 🚀 Quickstart
 
+Instruction d'installation : 
+
+Attention ce projet est sous la distribution Jazzy et utilise le robot Tiago simulé dans Tiago Harmonic, installer depuis https://github.com/Tiago-Harmonic/tiago_harmonic 
+
+Les projets et les dépendances sont a installer avec : 
 
 Launch instructions :
 
 Start DevContainer
-You need Visual Studio Code preinstalled
+Il vous faudra avoir VsCode d'installé sur votre ordinateur
 
 git clone https://gitlab.com/f2m2robserv/jazzy-ros-ynov
 code jazzy-ros-ynov/
@@ -36,7 +42,16 @@ ros2 run projet_robot_tiago projet_global
 
 
 
-📚 References and bibliography
+📚 References and bibliography :
+
+- Documentation Jazzy : https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Introducing-Turtlesim/Introducing-Turtlesim.html
+- Tourner la tête du robot : https://gitlab.com/-/snippets/4826611
+- Ouvrir la webcam de l'ordinateur : https://docs.opencv.org/4.x/dd/d43/tutorial_py_video_display.html
+- Lecture de QrCode sur une image : https://pypi.org/project/pyzbar/
+- Lecture des codes ARUCO : https://www.eirlab.net/2022/03/22/traitement-dimage-pour-la-detection-de-tag-aruco-avec-opencv-en-python-3-4/
+- Faire une map + dev container ros jazzy : https://gitlab.com/f2m2robserv/jazzy-ros-ynov#ros2-jazzy--robots-devcontainer
+- Modifier un modèle : https://gazebosim.org/docs/latest/sdf_worlds/#download-the-model
+
 
 
 ...

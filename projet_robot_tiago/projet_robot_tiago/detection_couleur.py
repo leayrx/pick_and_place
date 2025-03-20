@@ -15,20 +15,17 @@ class CanetteDetector(Node):
         # Abonnement au topic de la caméra
         self.subscription = self.create_subscription(
             Image,
-            '/head_front_camera/image',  # Modifiez ce topic si nécessaire
+            '/head_front_camera/image', 
             self.image_callback,
             10
         )
 
         self.get_logger().info("Abonné au topic /head_front_camera/image")
 
-        # Créer une fenêtre OpenCV pour l'affichage
+        # fenêtre OpenCV pour l'affichage
         cv2.namedWindow("Camera Feed", cv2.WINDOW_NORMAL)
 
-        # Flag pour indiquer si une canette a été détectée au centre
         self.candidate_detected = False
-
-        # Flag pour fermer le programme après la publication de la couleur
         self.done = False
 
     def image_callback(self, msg):
@@ -56,7 +53,6 @@ class CanetteDetector(Node):
             self.get_logger().error(f"Erreur lors de la conversion de l'image : {e}")
 
     def save_color_and_id_to_file(self, couleur, can_id):
-        # Sauvegarder la couleur et l'ID dans un fichier JSON
         try:
             with open('can_color.json', 'w') as file:
                 json.dump({"can_color": couleur, "can_id": can_id}, file)
@@ -70,7 +66,7 @@ class CanetteDetector(Node):
         """
         barycentres = []
         for corner in corners:
-            points = corner.reshape(-1, 2)  # Convertir les coins en 2D (x, y)
+            points = corner.reshape(-1, 2)  #(x, y)
             Gx = np.mean(points[:, 0])  # Moyenne des coordonnées x
             Gy = np.mean(points[:, 1])  # Moyenne des coordonnées y
             barycentres.append((Gx, Gy))
@@ -86,7 +82,7 @@ class CanetteDetector(Node):
             distance = np.sqrt((Gx - centre[0])**2 + (Gy - centre[1])**2)
             if distance < min_distance:
                 min_distance = distance
-                closest_marker = i  # Retourner l'indice du marqueur le plus proche
+                closest_marker = i  
         return closest_marker
 
     def detect_can_color(self, image):
@@ -94,7 +90,7 @@ class CanetteDetector(Node):
         Détecte la couleur de la canette la plus proche du centre de l'image.
         Retourne la couleur et l'ID associé (30 pour rouge, 40 pour vert).
         """
-        # Convertir l'image en espace de couleur HSV pour la détection de couleur
+        
         hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
         # Plages de couleur pour le rouge et le vert en HSV
@@ -107,33 +103,32 @@ class CanetteDetector(Node):
         mask_red2 = cv2.inRange(hsv_image, lower_red2, upper_red2)
 
         # Amélioration de la plage pour le vert
-        lower_green = np.array([35, 50, 50])  # Plage de teinte plus large pour le vert
+        lower_green = np.array([35, 50, 50])  
         upper_green = np.array([90, 255, 255])
         mask_green = cv2.inRange(hsv_image, lower_green, upper_green)
 
-        # Combiner les masques rouges
+        # masques rouges
         mask_red_combined = cv2.bitwise_or(mask_red, mask_red2)
 
-        # Trouver les contours de la canette
+        # contours de la canette
         contours_red, _ = cv2.findContours(mask_red_combined, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         contours_green, _ = cv2.findContours(mask_green, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-        # Si aucun contour n'est trouvé, retourner "autre" et ID = -1
+        # aucun contour trouvé
         if not contours_red and not contours_green:
             return "autre", -1
 
-        # Calculer le barycentre pour chaque marqueur
+        # barycentre 
         barycentres_red = self.calculer_barycentre([c.reshape(-1, 2) for c in contours_red])
         barycentres_green = self.calculer_barycentre([c.reshape(-1, 2) for c in contours_green])
 
-        # Trouver le centre de l'image
+        # centre de l'image
         center_of_image = (image.shape[1] // 2, image.shape[0] // 2)
 
-        # Trouver le marqueur rouge le plus proche du centre
+        # marqueur rouge le plus proche du centre
         closest_red_marker = self.trouver_marker_plus_proche(center_of_image, barycentres_red, contours_red)
         closest_green_marker = self.trouver_marker_plus_proche(center_of_image, barycentres_green, contours_green)
 
-        # Comparer les distances pour déterminer la canette la plus proche
         closest_can_color = None
         can_id = None
         if closest_red_marker is not None and closest_green_marker is None:

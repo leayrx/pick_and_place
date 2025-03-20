@@ -17,12 +17,14 @@ class SendGoalNode(Node):
         goal_pose.header.frame_id = 'map'
         #current_orientation = goal_pose.pose.orientation
 
-        # Point fixe (par exemple, un seul point ici)
-        goal_pose.pose.position.x = -3.5  # Position X du but
-        goal_pose.pose.position.y = -1.50 # Position Y du but
+        # Point fixe 
+        goal_pose.pose.position.x = -3.5  # X  but
+        goal_pose.pose.position.y = -1.50 # Y but
         goal_pose.pose.position.z = 0.0
+
         # Garder la même orientation que le robot avait en arrivant
         #goal_pose.pose.orientation = current_orientation
+
         goal_pose.pose.orientation.x = 0.0
         goal_pose.pose.orientation.y = 0.0
         goal_pose.pose.orientation.z = 90.0
@@ -49,7 +51,7 @@ class SendGoalNode(Node):
         result = future.result().result
         self.get_logger().info('Result: ' + str(result))
 
-        # Lorsque le résultat est reçu, définissez goal_reached sur True
+        # résultat reçu, définissez goal_reached sur True
         self.goal_reached = True
         self.get_logger().info('Robot reached the goal and will stop.')
 
@@ -59,8 +61,8 @@ def main():
     node.send_goal()  # Envoie un objectif unique
 
     while rclpy.ok():
-        rclpy.spin_once(node)  # Faire une seule boucle de gestion des événements
-        if node.goal_reached:  # Si l'objectif est atteint, arrêtez le nœud
+        rclpy.spin_once(node)  
+        if node.goal_reached:  
             node.get_logger().info('Stopping the node after goal is reached.')
             break  # Sortie de la boucle
 

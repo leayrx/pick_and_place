@@ -27,9 +27,10 @@ Launch instructions :
 
 Start DevContainer
 Il vous faudra avoir VsCode d'installé sur votre ordinateur
-
+```bash
 git clone https://gitlab.com/f2m2robserv/jazzy-ros-ynov
 code jazzy-ros-ynov/
+```
 
 When VSCode opens, trust the sources, and accept the installation of the Dev Container extension.
 To build the workspace use:

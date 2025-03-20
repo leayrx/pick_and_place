@@ -21,7 +21,7 @@ class ArUcoDetector(Node):
             10
         )
         self.get_logger().info("Abonné au topic /head_front_camera/image")
-        self.image_queue = image_queue  # Queue pour envoyer les images au thread principal
+        self.image_queue = image_queue  
         self.stop_event = stop_event  # Event pour signaler l'arrêt
         self.marker_detected = False
         self.counter = counter  # Compteur des requêtes envoyées
@@ -32,7 +32,7 @@ class ArUcoDetector(Node):
                 return  # Arrêter si 10 publications ont été envoyées ou l'événement d'arrêt est signalé
             cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
             self.detect_aruco_markers(cv_image)
-            self.image_queue.put(cv_image)  # Mettre l'image traitée dans la queue
+            self.image_queue.put(cv_image)  
         except Exception as e:
             self.get_logger().error(f"Erreur lors de la conversion de l'image : {e}")
 
@@ -85,7 +85,7 @@ def main():
     # Créer une Queue pour envoyer les images au thread principal
     image_queue = Queue()
     stop_event = threading.Event()
-    counter = [0]  # Utilisation d'une liste mutable pour partager le compteur entre les threads
+    counter = [0]  # Utilisation d'une liste pour partager le compteur entre les threads
 
     # Créer un thread pour ROS
     ros_thread_instance = threading.Thread(target=ros_thread, args=(image_queue, stop_event, counter), daemon=True)
@@ -97,14 +97,14 @@ def main():
     # Boucle d'affichage OpenCV dans le thread principal
     while True:
         if not image_queue.empty():
-            # Obtenir une image traitée depuis la queue
+            
             cv_image = image_queue.get()
             cv2.imshow("Camera Feed", cv_image)  # Affichage de l'image avec les marqueurs
 
         # Vérifier si l'utilisateur a pressé la touche 'q' pour fermer la fenêtre
         if cv2.waitKey(1) & 0xFF == ord('q'):
             print("Fermeture de la fenêtre...")
-            stop_event.set()  # Signaler au thread ROS d'arrêter
+            stop_event.set()  
             cv2.destroyAllWindows()
             break
         
@@ -112,7 +112,7 @@ def main():
         if counter[0] >= 1:
             time.sleep(3)
             print("3 marqueurs ont été publiés. Arrêt du programme.")
-            stop_event.set()  # Signaler au thread ROS d'arrêter
+            stop_event.set()  
             break
 
 if __name__ == '__main__':

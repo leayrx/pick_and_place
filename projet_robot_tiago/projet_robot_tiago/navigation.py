@@ -57,7 +57,7 @@ def main():
     node.send_goal()  # Envoie un objectif unique
 
     while rclpy.ok():
-        rclpy.spin_once(node)  # Faire une seule boucle de gestion des événements
+        rclpy.spin_once(node)  
         if node.goal_reached:  # Si l'objectif est atteint, arrêtez le nœud
             node.get_logger().info('Stopping the node after goal is reached.')
             break  # Sortie de la boucle

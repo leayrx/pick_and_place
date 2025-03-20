@@ -7,23 +7,23 @@ class ArUcoIdReceiver(Node):
     def __init__(self):
         super().__init__('aruco_id_receiver')
 
-        # Créer un abonné pour écouter les messages sur le topic 'aruco_marker_id'
+        
         self.subscription = self.create_subscription(
-            Int32,  # Le type du message que l'on écoute
-            'aruco_marker_id',  # Le topic sur lequel on écoute
+            Int32,  
+            'aruco_marker_id',  
             self.listener_callback,  # Le callback qui sera appelé quand un message est reçu
-            10  # La taille de la file d'attente
+            10  
         )
 
-        # Créer un publisher pour publier le résultat (True ou False) sur le topic 'marker_valid'
+        # publisher 'marker_valid'
         self.publisher = self.create_publisher(Bool, 'marker_valid', 10)
 
         self.get_logger().info('Abonné au topic "aruco_marker_id"')
 
-        # Charger la couleur et l'ID attendu depuis le fichier
+        # Charger la couleur et l'ID attendu 
         self.expected_id, self.expected_color = self.load_color_and_id_from_file()
 
-        # Variable pour suivre le nombre de messages traités
+        # nombre de messages traités
         self.message_count = 0
         self.max_messages = 1  # Arrêter après le premier message
 
@@ -34,7 +34,7 @@ class ArUcoIdReceiver(Node):
         """
         self.message_count += 1
 
-        marker_id = msg.data  # Récupérer l'ID du marqueur depuis le message
+        marker_id = msg.data  
         self.get_logger().info(f"ID du marqueur détecté : {marker_id}")
 
         # Vérifier si l'ID correspond à la valeur attendue
@@ -58,7 +58,7 @@ class ArUcoIdReceiver(Node):
         # Arrêter après avoir reçu un certain nombre de messages
         if self.message_count >= self.max_messages:
             self.get_logger().info("Arrêt du programme après le premier message.")
-            rclpy.shutdown()  # Arrêter le programme immédiatement
+            rclpy.shutdown()  
 
     def load_color_and_id_from_file(self):
         """
@@ -109,8 +109,7 @@ class ArUcoIdReceiver(Node):
 
 
 def main(args=None):
-    # Ne pas appeler rclpy.init() ici car il a déjà été appelé dans le programme principal.
-    # Créer une instance de notre nœud
+    
     aruco_id_receiver = ArUcoIdReceiver()
 
     # Créer un exécuteur multi-threadé

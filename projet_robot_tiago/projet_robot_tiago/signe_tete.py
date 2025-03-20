@@ -8,34 +8,28 @@ class RobotHeadControlNode(Node):
     def __init__(self):
         super().__init__('robot_head_control')
 
-        # Initialiser 'valid' à False et indiquer si le robot est en mouvement
         self.valid = False
         self.en_mouvement = False
 
-        # Abonnement au topic 'marker_valid' pour recevoir les informations de détection
         self.subscription = self.create_subscription(
             Bool,
-            'marker_valid',  # Nom du topic auquel vous vous abonnez
+            'marker_valid',  
             self.listener_callback,
             10
         )
 
         # Créer un éditeur pour publier sur le topic /head_controller/joint_trajectory
         self.publisher_ = self.create_publisher(JointTrajectory, '/head_controller/joint_trajectory', 10)
-
-        # Créer un éditeur pour publier l'état de mouvement du robot
         self.movement_publisher = self.create_publisher(Bool, '/robot_moving', 10)
 
         self.counter = 0
         self.direction = 1
         self.movement_count = 0
         self.stop_moving = False
-        self.total_movements = 0  # Nouveau compteur pour suivre les mouvements effectués
+        self.total_movements = 0  # mouvements effectués
 
         # Charger les informations du fichier JSON
         self.load_json_data()
-
-        # Exécution de la boucle pour publier régulièrement
         self.timer = self.create_timer(0.5, self.timer_callback)
 
     def load_json_data(self):
@@ -43,34 +37,27 @@ class RobotHeadControlNode(Node):
         try:
             with open('aruco_analysis_results.json', 'r') as f:
                 data = json.load(f)
-                # Exemple de récupération de l'état de détection du marqueur
                 self.valid = data.get('marker_valid', False)
                 self.get_logger().info(f"Données JSON chargées: Marqueur valide - {self.valid}")
         except Exception as e:
             self.get_logger().error(f"Erreur lors de la lecture du fichier JSON: {str(e)}")
 
     def listener_callback(self, msg):
-        # Cette fonction est appelée lorsqu'un message est reçu sur le topic 'marker_valid'
         self.get_logger().info(f"Statut du marqueur détecté: {msg.data}")
-        
-        # Mettre à jour le paramètre 'valid' en fonction de l'état de détection
         self.valid = msg.data
 
     def timer_callback(self):
-        # Publier l'état du mouvement du robot
         movement_msg = Bool()
         movement_msg.data = self.en_mouvement
         self.movement_publisher.publish(movement_msg)
         self.get_logger().info(f"État du mouvement publié: {'En mouvement' if self.en_mouvement else 'À l\'arrêt'}")
 
-        # Si on doit arrêter le mouvement, on ne fait rien
         if self.stop_moving:
             self.get_logger().info("Arrêt des mouvements.")
             self.get_logger().info("Arrêt du programme...")
-            self.destroy_node()  # Arrêter le nœud proprement
+            self.destroy_node() 
             return
 
-        # Créer le message JointTrajectory
         msg = JointTrajectory()
         msg.joint_names = ['head_1_joint', 'head_2_joint']
 
@@ -78,8 +65,7 @@ class RobotHeadControlNode(Node):
             self.get_logger().info("Le robot est en mouvement, ignorer la détection ArUco")
             return
 
-        if self.valid:  # Si le marqueur est détecté (True)
-            # Mouvement pour dire "oui" de la tête (par exemple, incliner la tête en avant)
+        if self.valid:  
             if self.counter < 3:
                 point = JointTrajectoryPoint()
                 if self.direction == 1:
@@ -96,7 +82,7 @@ class RobotHeadControlNode(Node):
                 if self.movement_count >= 5:
                     self.counter += 1
                     self.movement_count = 0
-                    self.direction = -self.direction  # Alterner la direction
+                    self.direction = -self.direction  
 
             else:
                 self.get_logger().info('Retour au centre')
@@ -107,14 +93,14 @@ class RobotHeadControlNode(Node):
 
                 self.counter = 0
                 self.movement_count = 0
-                self.direction = 1  # Réinitialiser la direction pour le prochain cycle
+                self.direction = 1  # Réinitialiser 
 
-                self.total_movements += 1  # Incrémenter le compteur de mouvements
-                if self.total_movements >= 3:  # Si 3 mouvements ont été effectués, arrêter
+                self.total_movements += 1  
+                if self.total_movements >= 3:  
                     self.stop_moving = True
-                    self.en_mouvement = True  # Indiquer que le robot est en mouvement
-        else:  # Si le marqueur n'est pas détecté (False), faire le mouvement "non"
-            # Mouvement pour dire "non" de la tête (par exemple, tourner la tête à gauche/droite)
+                    self.en_mouvement = True  
+        else:  
+
             if self.counter < 3:
                 point = JointTrajectoryPoint()
                 if self.direction == 1:
@@ -131,7 +117,7 @@ class RobotHeadControlNode(Node):
                 if self.movement_count >= 5:
                     self.counter += 1
                     self.movement_count = 0
-                    self.direction = -self.direction  # Alterner la direction
+                    self.direction = -self.direction  
 
             else:
                 self.get_logger().info('Retour au centre')
@@ -142,12 +128,12 @@ class RobotHeadControlNode(Node):
 
                 self.counter = 0
                 self.movement_count = 0
-                self.direction = 1  # Réinitialiser la direction pour le prochain cycle
+                self.direction = 1  
 
-                self.total_movements += 1  # Incrémenter le compteur de mouvements
-                if self.total_movements >= 3:  # Si 3 mouvements ont été effectués, arrêter
+                self.total_movements += 1  
+                if self.total_movements >= 3:  
                     self.stop_moving = True
-                    self.en_mouvement = True  # Indiquer que le robot est en mouvement
+                    self.en_mouvement = True  
 
         # Publier le message sur le topic
         self.publisher_.publish(msg)
@@ -159,9 +145,9 @@ def main(args=None):
     robot_head_control_node = RobotHeadControlNode()
 
     try:
-        rclpy.spin(robot_head_control_node)  # Bloque l'exécution jusqu'à ce que le nœud soit détruit
+        rclpy.spin(robot_head_control_node)  
     except KeyboardInterrupt:
-        pass  # Interrompre proprement si nécessaire
+        pass  
 
     # Détruire le nœud et arrêter ROS proprement
     robot_head_control_node.destroy_node()

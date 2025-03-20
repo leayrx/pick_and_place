@@ -41,6 +41,7 @@ source ~/.bashrc
 Tiago 2D navigation using Nav2:
 
 Documentation : https://docs.pal-robotics.com/sdk-dev/navigation
+
 1️⃣ Start Gazebo simulation of Tiago robot:
 ros2 launch tiago_gazebo tiago_gazebo.launch.py is_public_sim:=True world_name:=pick_and_place
 2️⃣ Start 2D navigation by loading your our_map map, using:
